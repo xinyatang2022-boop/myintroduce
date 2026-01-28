@@ -6,11 +6,20 @@ import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
+import bg from "./assets/bg1.png";
+
 import './App.css'
 
 export default function App() {
   return (
-    <div>
+    //setting background
+    <div style={{
+        minHeight: "100vh",
+        backgroundImage: `url(${bg})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}>
       {/* Top navigation with custom logo */}
       <Navbar />
       {/* Route outlet */}

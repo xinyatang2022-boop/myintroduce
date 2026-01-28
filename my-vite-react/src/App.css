@@ -1,8 +1,17 @@
 /* App.css - global utility classes for spacing, layout, and UI polish */
 :root { --accent: #111827; --muted: #6b7280; }
 * { box-sizing: border-box; }
-body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: #111827; background: #fafafa; }
+body {margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: #111827; background-color: #fafafa; font-size: 20px;   line-height: 1.6; }
+.app {
+  min-height: 100vh;
+  background-image: var(--app-bg);
+  background-size: cover;        
+  background-position: center;   
+  background-repeat: no-repeat;  
+  background-attachment: fixed;  
+}
 .container { max-width: 960px; margin: 24px auto; padding: 0 16px; }
+.container-home{max-width:1500px;  margin: 24px auto;padding: 0 16px;}
 .hero { padding: 32px 0; }
 .lead { color: var(--muted); font-size: 18px; }
 .accent { color: var(--accent); }
@@ -24,15 +33,7 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 .hero-left {flex: 0 0 auto;}
 .hero-logo {width: 300px;  height: auto;display: block;}
 .hero-right {flex: 1;}
-body {
-  margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
-  color: #111827;
-  background: #fafafa;
 
-  font-size: 20px;   
-  line-height: 1.6; 
-}
 
 
 @media (max-width: 640px) { .grid-2 { grid-template-columns: 1fr; } }

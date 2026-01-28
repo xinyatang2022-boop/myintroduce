@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo1.jpg";
 export default function Home() {
   return (
-    <main className="container">
+    <main className="container-home">
       <section className="hero hero-split">
         <div className="hero-left">        
             <img className="hero-logo" src={logo} alt="logo" />
