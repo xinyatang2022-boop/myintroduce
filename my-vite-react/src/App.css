@@ -20,6 +20,10 @@ body { margin: 0; font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI
 .contact-panel { background: #fff; border: 1px solid #e5e7eb; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; }
 .form label { display: grid; gap: 6px; margin-bottom: 10px; }
 .form input, .form textarea { padding: 10px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 14px; }
+.hero-split {display: flex;align-items: flex-start; gap: 32px;}
+.hero-left {flex: 0 0 auto;}
+.hero-logo {width: 300px;  height: auto;display: block;}
+.hero-right {flex: 1;}
 body {
   margin: 0;
   font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";

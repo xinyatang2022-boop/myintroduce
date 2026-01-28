@@ -2,7 +2,8 @@
 // Purpose: Top navigation bar with custom logo image and links to all pages.
 // Internal documentation: Use semantic nav element; logo imported from assets.
 import { Link, NavLink } from "react-router-dom";
-import logo from "../assets/logo1.jpg";
+//import logo from "../assets/logo1.jpg";
+//<img src={logo} alt="Site Logo" className="logo" />
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -10,7 +11,7 @@ export default function Navbar() {
     <nav className="navbar">
       <div className="nav-left">
         <Link to="/" className="brand">
-          <img src={logo} alt="Site Logo" className="logo" />
+          
           <span className="brand-text">MyPortfolio</span>
         </Link>
       </div>
