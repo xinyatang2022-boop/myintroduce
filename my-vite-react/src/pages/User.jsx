@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_BASE = "http://localhost:3000/api";
+const API_BASE = "https://myintroduce-backend.onrender.com/api";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
