@@ -6,6 +6,7 @@ import About from "./pages/About";
 import Projects from "./pages/Projects";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
+import User from "./pages/User";
 import bg from "./assets/bg1.png";
 
 import './App.css'
@@ -29,6 +30,7 @@ export default function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/user" element={<User />} />
       </Routes>
     </div>
   );
