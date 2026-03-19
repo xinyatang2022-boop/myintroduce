@@ -1,39 +1,35 @@
-// Services.jsx - Short list of services with brief descriptions.
-import uidesign from "../assets/ui2.png";
-import videopro from "../assets/video1.png"
-import databasede from "../assets/database1.png"
-import xiaohongshu from "../assets/redbook1.png";
+import { useEffect, useState } from "react";
 
-const services = [
-  { title: "UI Design",  
-    image: uidesign, 
-    desc: "Mobile-first interface design with clean layouts, typography, and components." 
-  },
-  { title: "Video Production", 
-    image: videopro, 
-    desc: "Planning, shooting, and editing short videos with pacing, sound, and color." 
-  },
-  { title: "Database Design", 
-    image: databasede, 
-    desc: "Oracle/SQL schema design, queries, and optimization." 
-  },
-  { title: "Xiaohongshu Operations", 
-    image: xiaohongshu, 
-    desc: "Content planning, posting strategy, basic analytics, and account growth support." 
-  },
-];
+const API_BASE = "http://localhost:3000/api";
 
 export default function Services() {
+  const [services, setServices] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(`${API_BASE}/services`)
+      .then((res) => res.json())
+      .then((result) => {
+        setServices(result.data || []);
+      })
+      .catch((err) => {
+        console.error("Failed to load services:", err);
+        setError("Failed to load services.");
+      });
+  }, []);
+
   return (
     <main className="container">
       <h2>Services</h2>
+
+      {error && <p>{error}</p>}
+
       <div className="cards">
-        {services.map((s, i) => (
-          <article key={i} className="card">
-            <img src={s.image} alt={s.title}/>
+        {services.map((s) => (
+          <article key={s.id} className="card">
             <div className="card-body">
               <h3>{s.title}</h3>
-              <p>{s.desc}</p>
+              <p>{s.description}</p>
             </div>
           </article>
         ))}
