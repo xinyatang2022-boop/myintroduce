@@ -15,6 +15,9 @@ export default function Projects() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
   function loadProjects() {
     fetch(`${API_BASE}/projects`)
       .then((res) => res.json())
@@ -50,11 +53,17 @@ export default function Projects() {
     setError("");
     setSuccess("");
 
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     if (editingId) {
       fetch(`${API_BASE}/projects/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -70,13 +79,14 @@ export default function Projects() {
         })
         .catch((err) => {
           console.error("Failed to update project:", err);
-          setError("Failed to update project.");
+          setError(err.message || "Failed to update project.");
         });
     } else {
       fetch(`${API_BASE}/projects`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -92,7 +102,7 @@ export default function Projects() {
         })
         .catch((err) => {
           console.error("Failed to add project:", err);
-          setError("Failed to add project.");
+          setError(err.message || "Failed to add project.");
         });
     }
   }
@@ -101,8 +111,16 @@ export default function Projects() {
     setError("");
     setSuccess("");
 
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     fetch(`${API_BASE}/projects/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.json())
       .then((result) => {
@@ -115,11 +133,16 @@ export default function Projects() {
       })
       .catch((err) => {
         console.error("Failed to delete project:", err);
-        setError("Failed to delete project.");
+        setError(err.message || "Failed to delete project.");
       });
   }
 
   function handleEdit(project) {
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     setEditingId(project.id);
     setForm({
       title: project.title || "",
@@ -136,55 +159,59 @@ export default function Projects() {
     <main className="container">
       <h2>Projects</h2>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <div className="grid-2">
+      {isLoggedIn && (
+        <form className="form" onSubmit={handleSubmit}>
+          <div className="grid-2">
+            <label>
+              Title
+              <input
+                name="title"
+                value={form.title}
+                onChange={handleChange}
+                required
+              />
+            </label>
+
+            <label>
+              Completion Date
+              <input
+                type="date"
+                name="completion"
+                value={form.completion}
+                onChange={handleChange}
+              />
+            </label>
+          </div>
+
           <label>
-            Title
-            <input
-              name="title"
-              value={form.title}
+            Description
+            <textarea
+              name="description"
+              rows="4"
+              value={form.description}
               onChange={handleChange}
               required
             />
           </label>
 
-          <label>
-            Completion Date
-            <input
-              type="date"
-              name="completion"
-              value={form.completion}
-              onChange={handleChange}
-            />
-          </label>
-        </div>
-
-        <label>
-          Description
-          <textarea
-            name="description"
-            rows="4"
-            value={form.description}
-            onChange={handleChange}
-            required
-          />
-        </label>
-
-        <button className="btn" type="submit">
-          {editingId ? "Update Project" : "Add Project"}
-        </button>
-
-        {editingId && (
-          <button
-            className="btn"
-            type="button"
-            onClick={resetForm}
-            style={{ marginLeft: "10px" }}
-          >
-            Cancel Edit
+          <button className="btn" type="submit">
+            {editingId ? "Update Project" : "Add Project"}
           </button>
-        )}
-      </form>
+
+          {editingId && (
+            <button
+              className="btn"
+              type="button"
+              onClick={resetForm}
+              style={{ marginLeft: "10px" }}
+            >
+              Cancel Edit
+            </button>
+          )}
+        </form>
+      )}
+
+      {!isLoggedIn && <p>Please sign in to add, edit, or delete projects.</p>}
 
       {success && <p>{success}</p>}
       {error && <p>{error}</p>}
@@ -204,22 +231,26 @@ export default function Projects() {
                   : "N/A"}
               </p>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleEdit(p)}
-              >
-                Edit
-              </button>
+              {isLoggedIn && (
+                <>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleEdit(p)}
+                  >
+                    Edit
+                  </button>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleDelete(p.id)}
-                style={{ marginLeft: "10px" }}
-              >
-                Delete
-              </button>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleDelete(p.id)}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
           </article>
         ))}
