@@ -14,6 +14,9 @@ export default function Services() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
   function loadServices() {
     fetch(`${API_BASE}/services`)
       .then((res) => res.json())
@@ -48,11 +51,17 @@ export default function Services() {
     setError("");
     setSuccess("");
 
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     if (editingId) {
       fetch(`${API_BASE}/services/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -68,13 +77,14 @@ export default function Services() {
         })
         .catch((err) => {
           console.error("Failed to update service:", err);
-          setError("Failed to update service.");
+          setError(err.message || "Failed to update service.");
         });
     } else {
       fetch(`${API_BASE}/services`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(form),
       })
@@ -90,7 +100,7 @@ export default function Services() {
         })
         .catch((err) => {
           console.error("Failed to add service:", err);
-          setError("Failed to add service.");
+          setError(err.message || "Failed to add service.");
         });
     }
   }
@@ -99,8 +109,16 @@ export default function Services() {
     setError("");
     setSuccess("");
 
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     fetch(`${API_BASE}/services/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.json())
       .then((result) => {
@@ -113,11 +131,16 @@ export default function Services() {
       })
       .catch((err) => {
         console.error("Failed to delete service:", err);
-        setError("Failed to delete service.");
+        setError(err.message || "Failed to delete service.");
       });
   }
 
   function handleEdit(service) {
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     setEditingId(service.id);
     setForm({
       title: service.title || "",
@@ -131,43 +154,47 @@ export default function Services() {
     <main className="container">
       <h2>Services</h2>
 
-      <form className="form" onSubmit={handleSubmit}>
-        <label>
-          Title
-          <input
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-          />
-        </label>
+      {isLoggedIn && (
+        <form className="form" onSubmit={handleSubmit}>
+          <label>
+            Title
+            <input
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <label>
-          Description
-          <textarea
-            name="description"
-            rows="4"
-            value={form.description}
-            onChange={handleChange}
-            required
-          />
-        </label>
+          <label>
+            Description
+            <textarea
+              name="description"
+              rows="4"
+              value={form.description}
+              onChange={handleChange}
+              required
+            />
+          </label>
 
-        <button className="btn" type="submit">
-          {editingId ? "Update Service" : "Add Service"}
-        </button>
-
-        {editingId && (
-          <button
-            className="btn"
-            type="button"
-            onClick={resetForm}
-            style={{ marginLeft: "10px" }}
-          >
-            Cancel Edit
+          <button className="btn" type="submit">
+            {editingId ? "Update Service" : "Add Service"}
           </button>
-        )}
-      </form>
+
+          {editingId && (
+            <button
+              className="btn"
+              type="button"
+              onClick={resetForm}
+              style={{ marginLeft: "10px" }}
+            >
+              Cancel Edit
+            </button>
+          )}
+        </form>
+      )}
+
+      {!isLoggedIn && <p>Please sign in to add, edit, or delete services.</p>}
 
       {success && <p>{success}</p>}
       {error && <p>{error}</p>}
@@ -179,22 +206,26 @@ export default function Services() {
               <h3>{s.title}</h3>
               <p>{s.description}</p>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleEdit(s)}
-              >
-                Edit
-              </button>
+              {isLoggedIn && (
+                <>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleEdit(s)}
+                  >
+                    Edit
+                  </button>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleDelete(s.id)}
-                style={{ marginLeft: "10px" }}
-              >
-                Delete
-              </button>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleDelete(s.id)}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
           </article>
         ))}
