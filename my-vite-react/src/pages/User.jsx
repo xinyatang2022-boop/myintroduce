@@ -18,6 +18,9 @@ export default function Users() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const token = localStorage.getItem("token");
+  const isLoggedIn = !!token;
+
   function loadUsers() {
     fetch(`${API_BASE}/users`)
       .then((res) => res.json())
@@ -63,10 +66,16 @@ export default function Users() {
     };
 
     if (editingId) {
+      if (!token) {
+        setError("You must sign in first.");
+        return;
+      }
+
       fetch(`${API_BASE}/users/${editingId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(payload),
       })
@@ -82,7 +91,7 @@ export default function Users() {
         })
         .catch((err) => {
           console.error("Failed to update user:", err);
-          setError("Failed to update user.");
+          setError(err.message || "Failed to update user.");
         });
     } else {
       fetch(`${API_BASE}/users`, {
@@ -104,18 +113,23 @@ export default function Users() {
         })
         .catch((err) => {
           console.error("Failed to add user:", err);
-          setError("Failed to add user.");
+          setError(err.message || "Failed to add user.");
         });
     }
   }
 
   function handleEdit(user) {
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     setEditingId(user.id);
     setForm({
       firstname: user.firstname || "",
       lastname: user.lastname || "",
       email: user.email || "",
-      password: user.password || "",
+      password: "",
       created: user.created
         ? new Date(user.created).toISOString().split("T")[0]
         : "",
@@ -131,8 +145,16 @@ export default function Users() {
     setError("");
     setSuccess("");
 
+    if (!token) {
+      setError("You must sign in first.");
+      return;
+    }
+
     fetch(`${API_BASE}/users/${id}`, {
       method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     })
       .then((res) => res.json())
       .then((result) => {
@@ -145,7 +167,7 @@ export default function Users() {
       })
       .catch((err) => {
         console.error("Failed to delete user:", err);
-        setError("Failed to delete user.");
+        setError(err.message || "Failed to delete user.");
       });
   }
 
@@ -191,10 +213,11 @@ export default function Users() {
           <label>
             Password
             <input
+              type="password"
               name="password"
               value={form.password}
               onChange={handleChange}
-              required
+              required={!editingId}
             />
           </label>
         </div>
@@ -237,6 +260,8 @@ export default function Users() {
         )}
       </form>
 
+      {!isLoggedIn && <p>Please sign in to edit or delete users.</p>}
+
       {success && <p>{success}</p>}
       {error && <p>{error}</p>}
 
@@ -248,7 +273,6 @@ export default function Users() {
                 {u.firstname} {u.lastname}
               </h3>
               <p><strong>Email:</strong> {u.email}</p>
-              <p><strong>Password:</strong> {u.password}</p>
               <p>
                 <strong>Created:</strong>{" "}
                 {u.created ? new Date(u.created).toLocaleDateString() : "N/A"}
@@ -258,22 +282,26 @@ export default function Users() {
                 {u.updated ? new Date(u.updated).toLocaleDateString() : "N/A"}
               </p>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleEdit(u)}
-              >
-                Edit
-              </button>
+              {isLoggedIn && (
+                <>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleEdit(u)}
+                  >
+                    Edit
+                  </button>
 
-              <button
-                className="btn"
-                type="button"
-                onClick={() => handleDelete(u.id)}
-                style={{ marginLeft: "10px" }}
-              >
-                Delete
-              </button>
+                  <button
+                    className="btn"
+                    type="button"
+                    onClick={() => handleDelete(u.id)}
+                    style={{ marginLeft: "10px" }}
+                  >
+                    Delete
+                  </button>
+                </>
+              )}
             </div>
           </article>
         ))}
