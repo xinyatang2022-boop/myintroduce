@@ -1,5 +1,5 @@
 // App.jsx - Sets up routes and global layout with Navbar.
-import{Routes, Route} from "react-router-dom"
+import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -7,23 +7,25 @@ import Projects from "./pages/Projects";
 import Services from "./pages/Services";
 import Contact from "./pages/Contact";
 import User from "./pages/User";
+import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn";
 import bg from "./assets/bg1.png";
 
-import './App.css'
+import "./App.css";
 
 export default function App() {
   return (
-    //setting background
-    <div style={{
+    <div
+      style={{
         minHeight: "100vh",
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-      }}>
-      {/* Top navigation with custom logo */}
+      }}
+    >
       <Navbar />
-      {/* Route outlet */}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
@@ -31,6 +33,8 @@ export default function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/user" element={<User />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<SignIn />} />
       </Routes>
     </div>
   );
